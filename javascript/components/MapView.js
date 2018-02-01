@@ -48,6 +48,11 @@ class MapView extends React.Component {
     userTrackingMode: PropTypes.number,
 
     /**
+     * The vertical alignment of the user location within in map. This is only enabled while tracking the users location.
+     */
+    userLocationVerticalAlignment: PropTypes.number,
+
+    /**
      * The distance from the edges of the map view’s frame to the edges of the map view’s logical viewport.
      */
     contentInset: PropTypes.oneOfType([
@@ -111,6 +116,13 @@ class MapView extends React.Component {
     rotateEnabled: PropTypes.bool,
 
     /**
+     * The Mapbox terms of service, which governs the use of Mapbox-hosted vector tiles and styles,
+     * [requires](https://www.mapbox.com/help/how-attribution-works/) these copyright notices to accompany any map that features Mapbox-designed styles, OpenStreetMap data, or other Mapbox data such as satellite or terrain data.
+     * If that applies to this map view, do not hide this view or remove any notices from it.
+     *
+     * You are additionally [required](https://www.mapbox.com/help/how-mobile-apps-work/#telemetry) to provide users with the option to disable anonymous usage and location sharing (telemetry).
+     * If this view is hidden, you must implement this setting elsewhere in your app. See our website for [Android](https://www.mapbox.com/android-docs/map-sdk/overview/#telemetry-opt-out) and [iOS](https://www.mapbox.com/ios-sdk/#telemetry_opt_out) for implementation details.
+     *
      * Enable/Disable attribution on map. For iOS you need to add MGLMapboxMetricsEnabledSettingShownInApp=YES
      * to your Info.plist
      */
@@ -207,14 +219,9 @@ class MapView extends React.Component {
     onDidFinishLoadingStyle: PropTypes.func,
 
     /**
-    * This event is triggered when a fly to animation is cancelled or completed after calling flyTo
-    */
-    onFlyToComplete: PropTypes.func,
-
-    /**
-     * This event is triggered once the camera is finished after calling setCamera
+     * This event is triggered when the users tracking mode is changed.
      */
-    onSetCameraComplete: PropTypes.func,
+    onUserTrackingModeChange: PropTypes.func,
   };
 
   static defaultProps = {
@@ -244,6 +251,22 @@ class MapView extends React.Component {
   }
 
   /**
+   * Converts a geographic coordinate to a point in the given view’s coordinate system.
+   *
+   * @example
+   * const pointInView = await this._map.getPointInView([-37.817070, 144.949901]);
+   *
+   * @param {Array<Number>} coordinate - A point expressed in the map view's coordinate system.
+   * @return {Array}
+   */
+  async getPointInView (coordinate) {
+    const res = await this._runNativeCommand('getPointInView',[
+      coordinate,
+    ]);
+    return res.pointInView;
+  }
+
+    /**
    * The coordinate bounds(ne, sw) visible in the users’s viewport.
    *
    * @example
@@ -475,6 +498,16 @@ class MapView extends React.Component {
     return this._runNativeCommand('setCamera', [cameraConfig]);
   }
 
+  /**
+   * Takes snapshot of map with current tiles and returns a URI to the image
+   * @param  {Boolean} writeToDisk If true will create a temp file, otherwise it is in base64
+   * @return {String}
+   */
+  async takeSnap (writeToDisk = false) {
+    const res = await this._runNativeCommand('takeSnap', [writeToDisk]);
+    return res.uri;
+  }
+
   _runNativeCommand (methodName, args = []) {
     if (isAndroid()) {
       return new Promise ((resolve) => {
@@ -633,6 +666,7 @@ class MapView extends React.Component {
       onLongPress: this._onLongPress,
       onMapChange: this._onChange,
       onAndroidCallback: isAndroid() ? this._onAndroidCallback : undefined,
+      onUserTrackingModeChange: this.props.onUserTrackingModeChange,
     };
 
     if (isAndroid() && this.props.textureMode) {

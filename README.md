@@ -15,7 +15,7 @@ Mapbox is the location data platform for mobile and web applications. We provide
 
 ## Sign up for Mapbox
 
-Not a Mapbox user yet? [Sign up for an account here](https://www.mapbox.com/signup/). Once you’re signed in, all you need to start building is a Mapbox access token. Use this same short code with all of our interactive mapping libraries, Python and JavaScript SDKs, and directly against our REST APIs. You can [create and manage your access tokens in Mapbox Studio](https://www.mapbox.com/studio/account/tokens/).
+Not a Mapbox user yet? [Sign up for an account here](https://www.mapbox.com/signup/). Once you’re signed in, all you need to start building is a Mapbox access token. Use this same short code with all of our interactive mapping libraries, Python and JavaScript SDKs, and directly against our REST APIs. You can create and manage your access tokens on your [Mapbox Account page](https://www.mapbox.com/account/).
 
 
 ## Installation
@@ -46,7 +46,7 @@ npm install @mapbox/react-native-mapbox-gl --save
 
 * [Android](/android/install.md)
 * [iOS](/ios/install.md)
-* [Example](/example/README.md)
+* [Example](/example)
 
 ## Documentation
 
@@ -73,6 +73,7 @@ npm install @mapbox/react-native-mapbox-gl --save
 
 ### Offline
 * [OfflineManager](/docs/OfflineManager.md)
+* [SnapshotManager](/docs/snapshotManager.md)
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2Freact-native-mapbox-gl.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2Freact-native-mapbox-gl?ref=badge_large)

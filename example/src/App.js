@@ -31,6 +31,7 @@ import ShowClick from './components/ShowClick';
 import FlyTo from './components/FlyTo';
 import FitBounds from './components/FitBounds';
 import SetUserTrackingModes from './components/SetUserTrackingModes';
+import SetUserLocationVerticalAlignment from './components/SetUserLocationVerticalAlignment';
 import ShowRegionDidChange from './components/ShowRegionDidChange';
 import CustomIcon from './components/CustomIcon';
 import YoYo from './components/YoYo';
@@ -49,6 +50,9 @@ import DriveTheLine from './components/DriveTheLine';
 import ImageOverlay from './components/ImageOverlay';
 import DataDrivenCircleColors from './components/DataDrivenCircleColors';
 import ChoroplethLayerByZoomLevel from './components/ChoroplethLayerByZoomLevel';
+import PointInMapView from './components/PointInMapView';
+import TakeSnapshot from './components/TakeSnapshot';
+import TakeSnapshotWithMap from './components/TakeSnapshotWithMap';
 
 const styles = StyleSheet.create({
   noPermissionsText: {
@@ -83,6 +87,8 @@ const styles = StyleSheet.create({
   },
 });
 
+MapboxGL.setAccessToken(config.get('accessToken'));
+
 class ExampleItem {
   constructor (label, Component) {
     this.label = label;
@@ -98,6 +104,7 @@ const Examples = [
   new ExampleItem('Fly To', FlyTo),
   new ExampleItem('Fit Bounds', FitBounds),
   new ExampleItem('Set User Tracking Modes', SetUserTrackingModes),
+  new ExampleItem('Set User Location Vertical Alignment', SetUserLocationVerticalAlignment),
   new ExampleItem('Show Region Did Change', ShowRegionDidChange),
   new ExampleItem('Custom Icon', CustomIcon),
   new ExampleItem('Yo Yo Camera', YoYo),
@@ -116,6 +123,9 @@ const Examples = [
   new ExampleItem('Image Overlay', ImageOverlay),
   new ExampleItem('Data Driven Circle Colors', DataDrivenCircleColors),
   new ExampleItem('Choropleth Layer By Zoom Level', ChoroplethLayerByZoomLevel),
+  new ExampleItem('Get Pixel Point in MapView', PointInMapView),
+  new ExampleItem('Take Snapshot Without Map', TakeSnapshot),
+  new ExampleItem('Take Snapshot With Map', TakeSnapshotWithMap),
 ];
 
 class App extends React.Component {
@@ -140,7 +150,6 @@ class App extends React.Component {
         isFetchingAndroidPermission: false,
       });
     }
-    MapboxGL.setAccessToken(config.get('accessToken'));
   }
 
   getActiveItem () {
@@ -164,7 +173,6 @@ class App extends React.Component {
         <TouchableOpacity onPress={() => this.onExamplePress(index)}>
           <View style={styles.exampleListItem}>
             <Text style={styles.exampleListLabel}>{item.label}</Text>
-
             <Icon name='keyboard-arrow-right' />
           </View>
         </TouchableOpacity>

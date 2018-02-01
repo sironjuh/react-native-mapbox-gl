@@ -17,6 +17,7 @@
 #import "CameraStop.h"
 #import "CameraUpdateQueue.h"
 #import "FilterParser.h"
+#import "MGLFaux3DUserLocationAnnotationView.h"
 
 @interface RCTMGLMapViewManager() <MGLMapViewDelegate>
 @end
@@ -82,6 +83,7 @@ RCT_REMAP_VIEW_PROPERTY(centerCoordinate, reactCenterCoordinate, NSString)
 RCT_REMAP_VIEW_PROPERTY(styleURL, reactStyleURL, NSString)
 
 RCT_REMAP_VIEW_PROPERTY(userTrackingMode, reactUserTrackingMode, int)
+RCT_REMAP_VIEW_PROPERTY(userLocationVerticalAlignment, reactUserLocationVerticalAlignment, int)
 
 RCT_EXPORT_VIEW_PROPERTY(heading, double)
 RCT_EXPORT_VIEW_PROPERTY(pitch, double)
@@ -92,8 +94,50 @@ RCT_REMAP_VIEW_PROPERTY(maxZoomLevel, reactMaxZoomLevel, double)
 RCT_EXPORT_VIEW_PROPERTY(onPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onLongPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onMapChange, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onUserTrackingModeChange, RCTBubblingEventBlock)
 
 #pragma mark - React Methods
+
+RCT_EXPORT_METHOD(getPointInView:(nonnull NSNumber*)reactTag
+                  atCoordinate:(NSArray<NSNumber*>*)coordinate
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *manager, NSDictionary<NSNumber*, UIView*> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        
+        if (![view isKindOfClass:[RCTMGLMapView class]]) {
+            RCTLogError(@"Invalid react tag, could not find RCTMGLMapView");
+            return;
+        }
+        
+        RCTMGLMapView *reactMapView = (RCTMGLMapView*)view;
+
+        CGPoint pointInView = [reactMapView convertCoordinate:CLLocationCoordinate2DMake([coordinate[1] doubleValue], [coordinate[0] doubleValue])
+                                                 toPointToView:reactMapView];
+
+        resolve(@{ @"pointInView": @[@(pointInView.x), @(pointInView.y)] });
+    }];
+}
+
+RCT_EXPORT_METHOD(takeSnap:(nonnull NSNumber*)reactTag
+                  writeToDisk:(BOOL)writeToDisk
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *manager, NSDictionary<NSNumber*, UIView*> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        
+        if (![view isKindOfClass:[RCTMGLMapView class]]) {
+            RCTLogError(@"Invalid react tag, could not find RCTMGLMapView");
+            return;
+        }
+        
+        RCTMGLMapView *reactMapView = (RCTMGLMapView*)view;
+        NSString *uri = [reactMapView takeSnap:writeToDisk];
+        resolve(@{ @"uri": uri });
+    }];
+}
 
 RCT_EXPORT_METHOD(getVisibleBounds:(nonnull NSNumber*)reactTag
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -288,6 +332,18 @@ RCT_EXPORT_METHOD(setCamera:(nonnull NSNumber*)reactTag
 
 #pragma mark - MGLMapViewDelegate
 
+- (void)mapView:(MGLMapView *)mapView didChangeUserTrackingMode:(MGLUserTrackingMode)mode animated:(BOOL)animated
+{
+    RCTMGLMapView *reactMapView = (RCTMGLMapView *)mapView;
+    if (reactMapView.onUserTrackingModeChange == nil) {
+        return;
+    }
+    
+    NSDictionary *payload = @{ @"userTrackingMode": @(mode) };
+    RCTMGLEvent *event = [RCTMGLEvent makeEvent:RCT_MAPBOX_USER_TRACKING_MODE_CHANGE withPayload:payload];
+    [self fireEvent:event withCallback:reactMapView.onUserTrackingModeChange];
+}
+
 - (BOOL)mapView:(MGLMapView *)mapView shouldChangeFromCamera:(MGLMapCamera *)oldCamera toCamera:(MGLMapCamera *)newCamera
 {
     RCTMGLMapView *reactMapView = (RCTMGLMapView *)mapView;
@@ -300,6 +356,8 @@ RCT_EXPORT_METHOD(setCamera:(nonnull NSNumber*)reactTag
     if ([annotation isKindOfClass:[RCTMGLPointAnnotation class]]) {
         RCTMGLPointAnnotation *rctAnnotation = (RCTMGLPointAnnotation *)annotation;
         return [rctAnnotation getAnnotationView];
+    } else if ([annotation isKindOfClass:[MGLUserLocation class]]) {
+        return [[MGLFaux3DUserLocationAnnotationView alloc] init];
     }
     return nil;
 }

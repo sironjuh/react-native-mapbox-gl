@@ -175,6 +175,11 @@ public class RCTMGLMapViewManager extends AbstractEventEmitter<RCTMGLMapView> {
         mapView.setReactUserTrackingMode(userTrackingMode);
     }
 
+    @ReactProp(name="userLocationVerticalAlignment")
+    public void setUserLocationVerticalAlignment(RCTMGLMapView mapView, int userLocationVerticalAlignment) {
+        mapView.setReactUserLocationVerticalAlignment(userLocationVerticalAlignment);
+    }
+
     //endregion
 
     //region Custom Events
@@ -185,6 +190,7 @@ public class RCTMGLMapViewManager extends AbstractEventEmitter<RCTMGLMapView> {
                 .put(EventKeys.MAP_CLICK, "onPress")
                 .put(EventKeys.MAP_LONG_CLICK,"onLongPress")
                 .put(EventKeys.MAP_ONCHANGE, "onMapChange")
+                .put(EventKeys.MAP_USER_TRACKING_MODE_CHANGE, "onUserTrackingModeChange")
                 .put(EventKeys.MAP_ANDROID_CALLBACK, "onAndroidCallback")
                 .build();
     }
@@ -197,6 +203,8 @@ public class RCTMGLMapViewManager extends AbstractEventEmitter<RCTMGLMapView> {
     public static final int METHOD_QUERY_FEATURES_POINT = 2;
     public static final int METHOD_QUERY_FEATURES_RECT = 3;
     public static final int METHOD_VISIBLE_BOUNDS = 4;
+    public static final int METHOD_GET_POINT_IN_VIEW = 5;
+    public static final int METHOD_TAKE_SNAP = 6;
 
     @Nullable
     @Override
@@ -206,6 +214,8 @@ public class RCTMGLMapViewManager extends AbstractEventEmitter<RCTMGLMapView> {
                 .put("queryRenderedFeaturesAtPoint", METHOD_QUERY_FEATURES_POINT)
                 .put("queryRenderedFeaturesInRect", METHOD_QUERY_FEATURES_RECT)
                 .put("getVisibleBounds", METHOD_VISIBLE_BOUNDS)
+                .put("getPointInView", METHOD_GET_POINT_IN_VIEW)
+                .put("takeSnap", METHOD_TAKE_SNAP)
                 .build();
     }
 
@@ -231,6 +241,13 @@ public class RCTMGLMapViewManager extends AbstractEventEmitter<RCTMGLMapView> {
                 break;
             case METHOD_VISIBLE_BOUNDS:
                 mapView.getVisibleBounds(args.getString(0));
+                break;
+            case METHOD_GET_POINT_IN_VIEW:
+                mapView.getPointInView(args.getString(0), GeoJSONUtils.toLatLng(args.getArray(1)));
+                break;
+            case METHOD_TAKE_SNAP:
+                mapView.takeSnap(args.getString(0), args.getBoolean(1));
+                break;
         }
     }
 
