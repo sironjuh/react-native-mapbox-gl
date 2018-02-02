@@ -28,10 +28,13 @@ dependencies {
     // Mapbox SDK
     compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.2.9'
 
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.3.1@aar') {
-        transitive=true
-    }
+    //compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.3.1@aar') {
+    //    transitive=true
+    //}
+    compile(name:'MapboxGLAndroidSDK', ext:'aar')
 
     // Mapbox plugins
-    compile 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.3.0'
+    compile('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.3.0') {
+        exclude group: 'com.mapbox.mapboxsdk'
+    }
 }
