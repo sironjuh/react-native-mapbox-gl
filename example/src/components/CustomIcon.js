@@ -22,7 +22,7 @@ class CustomIcon extends React.Component {
     ...BaseExamplePropTypes,
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -30,34 +30,46 @@ class CustomIcon extends React.Component {
     };
 
     this.onPress = this.onPress.bind(this);
+    this.onSourceLayerPress = this.onSourceLayerPress.bind(this);
   }
 
-  async onPress (e) {
+  async onPress(e) {
+    let feature = MapboxGL.geoUtils.makeFeature(e.geometry);
+    feature.id = '' + Date.now();
+
     this.setState({
       featureCollection: MapboxGL.geoUtils.addToFeatureCollection(
         this.state.featureCollection,
-        MapboxGL.geoUtils.makeFeature(e.geometry),
+        feature,
       ),
     });
   }
 
-  render () {
+  onSourceLayerPress(e) {
+    const feature = e.nativeEvent.payload;
+    console.log('You pressed a layer here is your feature', feature); // eslint-disable-line
+  }
+
+  render() {
     return (
       <Page {...this.props}>
         <MapboxGL.MapView
-            zoomLevel={9}
-            ref={(c) => this._map = c}
-            onPress={this.onPress}
-            centerCoordinate={[-73.970895, 40.723279]}
-            style={sheet.matchParent}>
-
-            <MapboxGL.ShapeSource id='symbolLocationSource' shape={this.state.featureCollection}>
-              <MapboxGL.SymbolLayer
-                id='symbolLocationSymbols'
-                minZoomLevel={1}
-                style={styles.icon} />
-            </MapboxGL.ShapeSource>
-
+          zoomLevel={9}
+          ref={(c) => (this._map = c)}
+          onPress={this.onPress}
+          centerCoordinate={[-73.970895, 40.723279]}
+          style={sheet.matchParent}>
+          <MapboxGL.ShapeSource
+            id="symbolLocationSource"
+            hitbox={{ width: 20, height: 20 }}
+            onPress={this.onSourceLayerPress}
+            shape={this.state.featureCollection}>
+            <MapboxGL.SymbolLayer
+              id="symbolLocationSymbols"
+              minZoomLevel={1}
+              style={styles.icon}
+            />
+          </MapboxGL.ShapeSource>
         </MapboxGL.MapView>
 
         <Bubble>

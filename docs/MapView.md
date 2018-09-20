@@ -17,6 +17,7 @@
 | zoomLevel | `number` | `16` | `false` | Initial zoom level of map |
 | minZoomLevel | `number` | `none` | `false` | Min zoom level of map |
 | maxZoomLevel | `number` | `none` | `false` | Max zoom level of map |
+| localizeLabels | `bool` | `false` | `false` | Automatically change the language of the map labels to the system’s preferred language,<br/>this is not something that can be toggled on/off |
 | zoomEnabled | `bool` | `none` | `false` | Enable/Disable zoom on the map |
 | scrollEnabled | `bool` | `true` | `false` | Enable/Disable scroll on the map |
 | pitchEnabled | `bool` | `true` | `false` | Enable/Disable pitch on map |
@@ -58,6 +59,22 @@ Converts a geographic coordinate to a point in the given view’s coordinate sys
 ```javascript
 const pointInView = await this._map.getPointInView([-37.817070, 144.949901]);
 ```
+
+#### getCoordinateFromView(point)
+
+Converts a point in the given view’s coordinate system to a geographic coordinate.
+
+##### arguments
+| Name | Type | Required | Description  |
+| ---- | :--: | :------: | :----------: |
+| `point` | `Array` | `Yes` | A point expressed in the given view’s coordinate system. |
+
+
+
+```javascript
+const coordinate = await this._map.getCoordinateFromView([100, 100]);
+```
+
 
 
 #### getVisibleBounds()

@@ -34,7 +34,6 @@ dependencies {
     compile(name:'MapboxGLAndroidSDK', ext:'aar')
 
     // Mapbox plugins
-    compile('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.3.0') {
-        exclude group: 'com.mapbox.mapboxsdk'
-    }
+    compile 'com.mapbox.mapboxsdk:mapbox-android-plugin-localization:0.1.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.3.0'
 }
