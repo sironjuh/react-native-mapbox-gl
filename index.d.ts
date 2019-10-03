@@ -24,9 +24,9 @@ type Visibility = 'visible' | 'none'
 type Alignment = 'map' | 'viewport';
 type AutoAlignment = Alignment | 'auto';
 
-type NamedStyles<T> = { 
-    [P in keyof T]: SymbolLayerStyle | RasterLayerStyle | LineLayerStyle | FillLayerStyle | 
-        FillExtrusionLayerStyle | CircleLayerStyle | BackgroundLayerStyle 
+type NamedStyles<T> = {
+    [P in keyof T]: SymbolLayerStyle | RasterLayerStyle | LineLayerStyle | FillLayerStyle |
+    FillExtrusionLayerStyle | CircleLayerStyle | BackgroundLayerStyle
 };
 
 declare namespace MapboxGL {
@@ -57,10 +57,10 @@ declare namespace MapboxGL {
     class Light extends Component<LightProps> { }
 
     class StyleSheet extends Component {
-        static create<T extends NamedStyles<T> | NamedStyles<any>>(styles: T): void;        
-        camera(stops: {[key: number]: string}, interpolationMode?: InterpolationMode): void;
-        source(stops: {[key: number]: string}, attributeName: string, interpolationMode?: InterpolationMode): void;
-        composite(stops: {[key: number]: string}, attributeName: string, interpolationMode?: InterpolationMode): void;
+        static create<T extends NamedStyles<T> | NamedStyles<any>>(styles: T): void;
+        camera(stops: { [key: number]: string }, interpolationMode?: InterpolationMode): void;
+        source(stops: { [key: number]: string }, attributeName: string, interpolationMode?: InterpolationMode): void;
+        composite(stops: { [key: number]: string }, attributeName: string, interpolationMode?: InterpolationMode): void;
 
         identity(attributeName: string): number;
     }
@@ -342,6 +342,7 @@ interface CalloutProps {
     url?: string;
     onPress?: () => void;
     hitbox?: any;
+    title?: string;
 }
 
 interface VectorSourceProps {
@@ -364,8 +365,8 @@ interface ShapeSourceProps {
     buffer?: number;
     tolerance?: number;
     images?: any;
-    onPress?: () => void;
-    hitbox: any;
+    onPress?: (e: any) => void;
+    hitbox?: any;
 }
 
 interface RasterSourceProps {
